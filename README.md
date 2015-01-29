@@ -6,7 +6,7 @@ Download audio from web using c#
 
 #Version
 
-1.0.0
+1.0.2
 
 # Installation
 
@@ -40,7 +40,7 @@ Within app.config or web.config file, under your <appSettings> please add a key/
     Console.ReadLine();
   }
 
-  static void downloader_FinishedDownload(object sender)
+  static void downloader_FinishedDownload(object sender, DownloadEventArgs e)
   {
     Console.WriteLine("Finished!");
   }
