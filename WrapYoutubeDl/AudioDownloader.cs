@@ -117,8 +117,11 @@ namespace WrapYoutubeDl
                 return;
             }
 
+            // fire the process event
             var perc = Convert.ToDecimal(Regex.Match(outLine.Data, @"\b\d+([\.,]\d+)?"));
             this.OnProgress(new ProgressEventArgs() { Percentage = perc });
+
+            // is it finished?
             if (perc < 100 || Finished)
             {
                 return;
