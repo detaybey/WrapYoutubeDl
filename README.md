@@ -17,7 +17,7 @@ You need to download or use the binaries in the repo, following exe files are ne
 
 # Setup
 
-Under your <appSettings> please add a key/value pair for your binaries path.
+Within app.config or web.config file, under your <appSettings> please add a key/value pair for your binaries path.
 ```xml
   <appSettings>
     <add key="binaryfolder" value="PATH_TO_YOUR_BINARIES"/>
