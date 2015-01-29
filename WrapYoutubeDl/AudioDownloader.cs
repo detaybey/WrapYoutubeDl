@@ -103,7 +103,6 @@ namespace WrapYoutubeDl
         public void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
             // extract the percentage from process output
-            var pattern = new Regex(@"\b\d+([\.,]\d+)?", RegexOptions.None);
             if (String.IsNullOrEmpty(outLine.Data))
             {
                 return;
@@ -112,13 +111,18 @@ namespace WrapYoutubeDl
             {
                 return;
             }
+            var pattern = new Regex(@"\b\d+([\.,]\d+)?", RegexOptions.None);
             if (!pattern.IsMatch(outLine.Data))
             {
                 return;
             }
 
             // fire the process event
-            var perc = Convert.ToDecimal(Regex.Match(outLine.Data, @"\b\d+([\.,]\d+)?"));
+            var perc = Convert.ToDecimal(Regex.Match(outLine.Data, @"\b\d+([\.,]\d+)?").Value);
+            if (perc > 100 || perc < 0)
+            {
+                return;
+            }
             this.OnProgress(new ProgressEventArgs() { Percentage = perc });
 
             // is it finished?

@@ -11,7 +11,6 @@ namespace WrapYoutubeDl.Cnsl
     {
         static void Main(string[] args)
         {
-
             var downloader = new AudioDownloader("https://www.youtube.com/watch?v=qDc_5zpBj7s", Guid.NewGuid().ToString(), "c:/@mp3/");
             downloader.ProgressDownload += downloader_ProgressDownload;
             downloader.Download();
@@ -22,6 +21,6 @@ namespace WrapYoutubeDl.Cnsl
         {
             Console.WriteLine(e.Percentage);
         }
- 
+
     }
 }
