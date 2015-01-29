@@ -31,8 +31,15 @@ namespace WrapYoutubeDl
         public string DestinationFolder { get; set; }
         public AudioDownloader(string url, string outputName, string outputfolder)
         {
-            OutputName = outputName + ".mp3";
+
             DestinationFolder = outputfolder;
+
+            // make sure filename ends with an mp3 extension
+            OutputName = outputName;
+            if (!OutputName.ToLower().EndsWith(".mp3"))
+            {
+                OutputName += ".mp3";
+            }
 
             // this is the path where you keep the binaries (ffmpeg, youtube-dl etc)
             var binaryPath = ConfigurationManager.AppSettings["binaryfolder"];
