@@ -23,7 +23,7 @@ namespace WrapYoutubeDl.Cnsl
             Console.ReadLine();
         }
 
-        static void downloader_FinishedDownload(object sender)
+        static void downloader_FinishedDownload(object sender, DownloadEventArgs e)
         {
             Console.WriteLine("Finished!");
         }

@@ -21,4 +21,18 @@ namespace WrapYoutubeDl
         }
 
     }
+
+    /// <summary>
+    /// The event arguement class for passing when progress event is fired
+    /// </summary>
+    public class DownloadEventArgs : EventArgs
+    {
+        public object Object { get; set; }
+        public DownloadEventArgs() :
+            base()
+        {
+
+        }
+
+    }
 }

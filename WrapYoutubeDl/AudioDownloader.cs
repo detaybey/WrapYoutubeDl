@@ -14,15 +14,16 @@ namespace WrapYoutubeDl
         public delegate void ProgressEventHandler(object sender, ProgressEventArgs e);
         public event ProgressEventHandler ProgressDownload;
 
-        public delegate void FinishedDownloadEventHandler(object sender);
+        public delegate void FinishedDownloadEventHandler(object sender, DownloadEventArgs e);
         public event FinishedDownloadEventHandler FinishedDownload;
 
-        public delegate void StartedDownloadEventHandler(object sender);
+        public delegate void StartedDownloadEventHandler(object sender, DownloadEventArgs e);
         public event StartedDownloadEventHandler StartedDownload;
 
         public delegate void ErrorEventHandler(object sender, ProgressEventArgs e);
         public event ErrorEventHandler ErrorDownload;
 
+        public Object Object { get; set; }
         public bool Started { get; set; }
         public bool Finished { get; set; }
         public decimal Percentage { get; set; }
@@ -69,19 +70,19 @@ namespace WrapYoutubeDl
                 ProgressDownload(this, e);
             }
         }
-        protected virtual void OnDownloadFinished()
+        protected virtual void OnDownloadFinished(DownloadEventArgs e)
         {
             if (FinishedDownload != null)
             {
-                FinishedDownload(this);
+                FinishedDownload(this, e);
             }
         }
 
-        protected virtual void OnDownloadStarted()
+        protected virtual void OnDownloadStarted(DownloadEventArgs e)
         {
             if (StartedDownload != null)
             {
-                StartedDownload(this);
+                StartedDownload(this, e);
             }
         }
 
@@ -93,11 +94,12 @@ namespace WrapYoutubeDl
             }
         }
 
-        public void Download()
+        public void Download(object obj  = null)
         {
             Process.Start();
             Process.BeginOutputReadLine();
-            this.OnDownloadStarted();
+            this.Object = obj;
+            this.OnDownloadStarted(new DownloadEventArgs() { Object = obj });
         }
 
         public void ErrorDataReceived(object sendingprocess, DataReceivedEventArgs error)
@@ -141,7 +143,7 @@ namespace WrapYoutubeDl
 
             // task is finished, move the file to destination
             System.IO.File.Move(OutputName, System.IO.Path.Combine(DestinationFolder, OutputName));
-            this.OnDownloadFinished();
+            this.OnDownloadFinished(new DownloadEventArgs() { Object = this.Object });
             this.Finished = true;
         }
     }
