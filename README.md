@@ -4,19 +4,19 @@ C# wrapper for https://github.com/rg3/youtube-dl
 
 Download audio from web using c#
 
-Version
---------------
+#Version
+----
 1.0.0
 
 # Installation
---------------
+----
 You need to download or use the binaries in the repo, following exe files are needed;
 
 * ffmpeg.exe  - https://www.ffmpeg.org/download.html
 * youtube-dl.exe   - https://rg3.github.io/youtube-dl/download.html
 
 # Setup
---------------
+----
 
 Under your <appSettings> please add a key/value pair for your binaries path.
 ```xml
@@ -25,7 +25,7 @@ Under your <appSettings> please add a key/value pair for your binaries path.
   </appSettings>
 ```  
 # Usage
---------------
+----
 ```c#
   static void Main(string[] args)
   {
@@ -52,7 +52,7 @@ Under your <appSettings> please add a key/value pair for your binaries path.
   }
 ```
 NuGet
---------------
+----
 
 To install WrapYouTubeDl, run the following command in the Package Manager Console
 ```sh
@@ -60,6 +60,6 @@ PM> Install-Package WrapYouTubeDl
 ```
 
 License
---------------
+----
 
 Apache License 2.0
