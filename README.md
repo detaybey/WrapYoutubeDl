@@ -10,10 +10,11 @@ youtube-dl.exe   - https://rg3.github.io/youtube-dl/download.html
 # Setup
 
 under your <appSettings> please add a key/value pair for your binaries path.
+```
   <appSettings>
-    <add key="binaryfolder" value="c:/@Code/WrapYoutubeDl/Binaries/"/>
+    <add key="binaryfolder" value="PATH_TO_YOUR_BINARIES"/>
   </appSettings>
-  
+```  
 # Usage
 ```
   static void Main(string[] args)
