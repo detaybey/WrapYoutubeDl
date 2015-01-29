@@ -130,6 +130,7 @@ namespace WrapYoutubeDl
             {
                 return;
             }
+            this.Percentage = perc;
             this.OnProgress(new ProgressEventArgs() { Percentage = perc });
 
             // is it finished?
@@ -141,7 +142,7 @@ namespace WrapYoutubeDl
             // task is finished, move the file to destination
             System.IO.File.Move(OutputName, System.IO.Path.Combine(DestinationFolder, OutputName));
             this.OnDownloadFinished();
-            Finished = true;
+            this.Finished = true;
         }
     }
 

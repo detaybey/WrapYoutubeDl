@@ -11,7 +11,7 @@ namespace WrapYoutubeDl.Cnsl
     {
         static void Main(string[] args)
         {
-            var urlToDownload = "https://www.youtube.com/watch?v=qDc_5zpBj7s";
+            var urlToDownload = "https://www.youtube.com/watch?v=JLCybxJU4qM";
             var newFilename = Guid.NewGuid().ToString();
             var mp3OutputFolder = "c:/@mp3/";
 
