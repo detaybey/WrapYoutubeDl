@@ -1,7 +1,7 @@
 # WrapYoutubeDl
 C# wrapper for https://github.com/rg3/youtube-dl 
 
-Download everything from web using c# :)
+Download audio from web using c# :)
 
 # Installation
 You need to download or use the binaries in the repo, following exe files are needed;
