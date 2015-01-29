@@ -1,9 +1,15 @@
 # WrapYoutubeDl
+
 C# wrapper for https://github.com/rg3/youtube-dl 
 
-Download everything from web using c# :)
+Download audio from web using c#
+
+#Version
+
+1.0.0
 
 # Installation
+
 You need to download or use the binaries in the repo, following exe files are needed;
 
 * ffmpeg.exe  - https://www.ffmpeg.org/download.html
@@ -11,12 +17,13 @@ You need to download or use the binaries in the repo, following exe files are ne
 
 # Setup
 
-under your <appSettings> please add a key/value pair for your binaries path.
+Under your <appSettings> please add a key/value pair for your binaries path.
 ```xml
   <appSettings>
     <add key="binaryfolder" value="PATH_TO_YOUR_BINARIES"/>
   </appSettings>
 ```  
+
 # Usage
 ```c#
   static void Main(string[] args)
@@ -43,3 +50,13 @@ under your <appSettings> please add a key/value pair for your binaries path.
     Console.WriteLine(e.Percentage);
   }
 ```
+# NuGet
+
+To install WrapYouTubeDl, run the following command in the Package Manager Console
+```sh
+PM> Install-Package WrapYouTubeDl
+```
+
+# License
+
+Apache License 2.0
