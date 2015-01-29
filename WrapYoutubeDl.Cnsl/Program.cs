@@ -10,15 +10,19 @@ namespace WrapYoutubeDl.Cnsl
     class Program
     {
         static void Main(string[] args)
-        {
-            var urlToDownload = "https://www.youtube.com/watch?v=JLCybxJU4qM";
-            var newFilename = Guid.NewGuid().ToString();
+        {           
+          
             var mp3OutputFolder = "c:/@mp3/";
 
-            var downloader = new AudioDownloader(urlToDownload, newFilename, mp3OutputFolder);
+            var downloader = new AudioDownloader("https://www.youtube.com/watch?v=KWZGAExj-es", Guid.NewGuid().ToString(), mp3OutputFolder, true);
             downloader.ProgressDownload += downloader_ProgressDownload;
             downloader.FinishedDownload += downloader_FinishedDownload;
             downloader.Download();
+
+            var downloader2 = new AudioDownloader("https://www.youtube.com/watch?v=09R8_2nJtjg", Guid.NewGuid().ToString(), mp3OutputFolder, true);
+            downloader2.ProgressDownload += downloader_ProgressDownload;
+            downloader2.FinishedDownload += downloader_FinishedDownload;
+            downloader2.Download();
 
             Console.ReadLine();
         }

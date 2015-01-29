@@ -30,10 +30,17 @@ namespace WrapYoutubeDl
         public Process Process { get; set; }
         public string OutputName { get; set; }
         public string DestinationFolder { get; set; }
-        public AudioDownloader(string url, string outputName, string outputfolder)
+        public bool Async { get; set; }
+        public string Url { get; set; }
+        public AudioDownloader(string url, string outputName, string outputfolder, bool async = false)
         {
+            this.Started = false;
+            this.Finished = false;
+            this.Percentage = 0;
 
+            Async = async;
             DestinationFolder = outputfolder;
+            Url = url;
 
             // make sure filename ends with an mp3 extension
             OutputName = outputName;
@@ -44,11 +51,12 @@ namespace WrapYoutubeDl
 
             // this is the path where you keep the binaries (ffmpeg, youtube-dl etc)
             var binaryPath = ConfigurationManager.AppSettings["binaryfolder"];
-            var arguments = string.Format(@"--continue --ignore-errors --no-overwrites --restrict-filenames --extract-audio --audio-format mp3 {0} -o ""{1}""", url, OutputName);
-
-            this.Started = false;
-            this.Finished = false;
-            this.Percentage = 0;
+            var destinationPath = System.IO.Path.Combine(outputfolder, OutputName);
+            if (System.IO.File.Exists(destinationPath))
+            {
+                throw new Exception(destinationPath + " exists");
+            }
+            var arguments = string.Format(@"--continue --ignore-errors --no-overwrites --restrict-filenames --extract-audio --audio-format mp3 {0} -o ""{1}""", url, destinationPath);
 
             // setup the process that will fire youtube-dl
             Process = new Process();
@@ -96,17 +104,26 @@ namespace WrapYoutubeDl
 
         public void Download(object obj  = null)
         {
+            Console.WriteLine("Downloading {0}", Url);
             Process.Start();
             Process.BeginOutputReadLine();
             this.Object = obj;
             this.OnDownloadStarted(new DownloadEventArgs() { Object = obj });
+            if (!this.Async)
+            {
+                while (this.Finished == false)
+                {
+                    System.Threading.Thread.Sleep(100);
+                    // wait while process exits;
+                }
+            }
         }
 
         public void ErrorDataReceived(object sendingprocess, DataReceivedEventArgs error)
         {
             if (!String.IsNullOrEmpty(error.Data))
             {
-                this.OnDownloadError(new ProgressEventArgs() { Error = error.Data });
+                this.OnDownloadError(new ProgressEventArgs() { Error = error.Data, Object = this.Object });
             }
         }
         public void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
@@ -142,7 +159,6 @@ namespace WrapYoutubeDl
             }
 
             // task is finished, move the file to destination
-            System.IO.File.Move(OutputName, System.IO.Path.Combine(DestinationFolder, OutputName));
             this.OnDownloadFinished(new DownloadEventArgs() { Object = this.Object });
             this.Finished = true;
         }

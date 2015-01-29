@@ -11,6 +11,7 @@ namespace WrapYoutubeDl
     /// </summary>
     public class ProgressEventArgs : EventArgs
     {
+        public Object Object { get; set; }
         public decimal Percentage { get; set; }
         public string Error { get; set; }
 
