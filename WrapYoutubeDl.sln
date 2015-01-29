@@ -5,15 +5,6 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapYoutubeDl", "WrapYoutubeDl\WrapYoutubeDl.csproj", "{E3BA1768-F7AC-45C1-813E-B6C6362E126A}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{40EE8CDD-DF53-4975-AA4C-A8FC06D6FC59}"
-	ProjectSection(SolutionItems) = preProject
-		Binaries\ffmpeg.exe = Binaries\ffmpeg.exe
-		Binaries\ffplay.exe = Binaries\ffplay.exe
-		Binaries\ffprobe.exe = Binaries\ffprobe.exe
-		Binaries\youtube-dl.cfg = Binaries\youtube-dl.cfg
-		Binaries\youtube-dl.exe = Binaries\youtube-dl.exe
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WrapYoutubeDl.Cnsl", "WrapYoutubeDl.Cnsl\WrapYoutubeDl.Cnsl.csproj", "{C564E899-98C0-4261-87E9-6481FA929722}"
 EndProject
 Global

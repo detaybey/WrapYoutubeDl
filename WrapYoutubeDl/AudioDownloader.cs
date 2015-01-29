@@ -43,7 +43,7 @@ namespace WrapYoutubeDl
 
             // this is the path where you keep the binaries (ffmpeg, youtube-dl etc)
             var binaryPath = ConfigurationManager.AppSettings["binaryfolder"];
-            var arguments = string.Format(@"--extract-audio --audio-format mp3 {0} -o ""{1}""", url, OutputName);
+            var arguments = string.Format(@"--continue --ignore-errors --no-overwrites --restrict-filenames --extract-audio --audio-format mp3 {0} -o ""{1}""", url, OutputName);
 
             this.Started = false;
             this.Finished = false;
