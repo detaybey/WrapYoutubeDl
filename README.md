@@ -15,9 +15,9 @@ under your <appSettings> please add a key/value pair for your binaries path.
   </appSettings>
   
 # Usage
-
-static void Main(string[] args)
-{
+```
+  static void Main(string[] args)
+  {
     var urlToDownload = "https://www.youtube.com/watch?v=qDc_5zpBj7s";
     var newFilename = Guid.NewGuid().ToString();
     var mp3OutputFolder = "c:/@mp3/";
@@ -28,14 +28,15 @@ static void Main(string[] args)
     downloader.Download();
 
     Console.ReadLine();
-}
+  }
 
-static void downloader_FinishedDownload(object sender)
-{
+  static void downloader_FinishedDownload(object sender)
+  {
     Console.WriteLine("Finished!");
-}
+  }
 
-static void downloader_ProgressDownload(object sender, ProgressEventArgs e)
-{
+  static void downloader_ProgressDownload(object sender, ProgressEventArgs e)
+  {
     Console.WriteLine(e.Percentage);
-}
+  }
+```
