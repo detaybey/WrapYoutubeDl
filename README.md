@@ -50,13 +50,13 @@ Under your <appSettings> please add a key/value pair for your binaries path.
     Console.WriteLine(e.Percentage);
   }
 ```
-NuGet
+# NuGet
 
 To install WrapYouTubeDl, run the following command in the Package Manager Console
 ```sh
 PM> Install-Package WrapYouTubeDl
 ```
 
-License
+# License
 
 Apache License 2.0
