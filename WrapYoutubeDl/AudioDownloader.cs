@@ -51,6 +51,8 @@ namespace WrapYoutubeDl
 
             // this is the path where you keep the binaries (ffmpeg, youtube-dl etc)
             var binaryPath = ConfigurationManager.AppSettings["binaryfolder"];
+
+            // if the destination file exists, exit
             var destinationPath = System.IO.Path.Combine(outputfolder, OutputName);
             if (System.IO.File.Exists(destinationPath))
             {
