@@ -23,7 +23,7 @@ namespace WrapYoutubeDl
         public delegate void ErrorEventHandler(object sender, ProgressEventArgs e);
         public event ErrorEventHandler ErrorDownload;
 
-        public Object Object { get; set; }
+        public Object ProcessObject { get; set; }
         public bool Started { get; set; }
         public bool Finished { get; set; }
         public decimal Percentage { get; set; }
@@ -68,6 +68,8 @@ namespace WrapYoutubeDl
             Process.StartInfo.RedirectStandardOutput = true;
             Process.StartInfo.Arguments = arguments;
             Process.StartInfo.CreateNoWindow = true;
+            Process.EnableRaisingEvents = true;
+                
             Process.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
             Process.ErrorDataReceived += new DataReceivedEventHandler(ErrorDataReceived);
 
@@ -104,20 +106,29 @@ namespace WrapYoutubeDl
             }
         }
 
-        public void Download(object obj  = null)
+        public void Download()
         {
             Console.WriteLine("Downloading {0}", Url);
+            Process.Exited += Process_Exited;
             Process.Start();
             Process.BeginOutputReadLine();
-            this.Object = obj;
-            this.OnDownloadStarted(new DownloadEventArgs() { Object = obj });
+            this.OnDownloadStarted(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
             if (!this.Async)
             {
                 while (this.Finished == false)
                 {
-                    System.Threading.Thread.Sleep(100);
-                    // wait while process exits;
+                    System.Threading.Thread.Sleep(100);                   // wait while process exits;
                 }
+            }
+           
+        }
+
+        void Process_Exited(object sender, EventArgs e)
+        {            
+            this.Finished = true;
+            if (this.Percentage < 100)
+            {
+                this.OnDownloadError(new ProgressEventArgs() { Error = "Download error", ProcessObject = this.ProcessObject });
             }
         }
 
@@ -125,7 +136,7 @@ namespace WrapYoutubeDl
         {
             if (!String.IsNullOrEmpty(error.Data))
             {
-                this.OnDownloadError(new ProgressEventArgs() { Error = error.Data, Object = this.Object });
+                this.OnDownloadError(new ProgressEventArgs() { Error = error.Data, ProcessObject = this.ProcessObject });
             }
         }
         public void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
@@ -135,6 +146,14 @@ namespace WrapYoutubeDl
             {
                 return;
             }
+            Console.WriteLine(outLine.Data);
+
+            if (outLine.Data.Contains("ERROR"))
+            {
+                this.OnDownloadError(new ProgressEventArgs() { Error = outLine.Data, ProcessObject = this.ProcessObject });
+                return;
+            }
+
             if (!outLine.Data.Contains("[download]"))
             {
                 return;
@@ -161,7 +180,7 @@ namespace WrapYoutubeDl
             }
 
             // task is finished, move the file to destination
-            this.OnDownloadFinished(new DownloadEventArgs() { Object = this.Object });
+            this.OnDownloadFinished(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
             this.Finished = true;
         }
     }
