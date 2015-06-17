@@ -62,14 +62,14 @@ namespace WrapYoutubeDl
             {
                 throw new Exception(destinationPath + " exists");
             }
-            var arguments = string.Format(@"--continue --ignore-errors --no-overwrites --restrict-filenames --extract-audio --audio-format mp3 {0} -o ""{1}""", url, destinationPath);
+				var arguments = string.Format(@"--continue  --no-overwrites --restrict-filenames --extract-audio --audio-format mp3 {0} -o ""{1}""", url, destinationPath);  //--ignore-errors
 
             // setup the process that will fire youtube-dl
             Process = new Process();
-            Process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+				Process.StartInfo.UseShellExecute = false;
+				Process.StartInfo.RedirectStandardOutput = true;
+				Process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
             Process.StartInfo.FileName = System.IO.Path.Combine(binaryPath, "youtube-dl.exe");
-            Process.StartInfo.UseShellExecute = false;
-            Process.StartInfo.RedirectStandardOutput = true;
             Process.StartInfo.Arguments = arguments;
             Process.StartInfo.CreateNoWindow = true;
             Process.EnableRaisingEvents = true;
@@ -90,7 +90,11 @@ namespace WrapYoutubeDl
         {
             if (FinishedDownload != null)
             {
-                FinishedDownload(this, e);
+					if (!Finished)
+					{
+						Finished = true;
+						FinishedDownload(this, e);
+					}
             }
         }
 
@@ -129,12 +133,8 @@ namespace WrapYoutubeDl
 
         void Process_Exited(object sender, EventArgs e)
         {            
-            this.Finished = true;
-            if (this.Percentage < 100)
-            {
-                this.OnDownloadError(new ProgressEventArgs() { Error = "Download error", ProcessObject = this.ProcessObject });
-            }
-        }
+				this.OnDownloadFinished(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
+		  }
 
         public void ErrorDataReceived(object sendingprocess, DataReceivedEventArgs error)
         {
@@ -177,15 +177,14 @@ namespace WrapYoutubeDl
             this.Percentage = perc;
             this.OnProgress(new ProgressEventArgs() { Percentage = perc });
 
-            // is it finished?
-            if (perc < 100 || Finished)
-            {
-                return;
-            }
+				//// is it finished?
+				//if (perc < 100 || Finished)
+				//{
+				//	 return;
+				//}
 
-            // task is finished, move the file to destination
-            this.OnDownloadFinished(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
-            this.Finished = true;
+				//// task is finished, move the file to destination
+				//this.OnDownloadFinished(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
         }
     }
 
