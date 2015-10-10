@@ -32,6 +32,8 @@ namespace WrapYoutubeDl
         public string DestinationFolder { get; set; }
         public bool Async { get; set; }
         public string Url { get; set; }
+
+        public string ConsoleLog { get; set; }
         public AudioDownloader(string url, string outputName, string outputfolder, bool async = false)
         {
             this.Started = false;
@@ -84,15 +86,23 @@ namespace WrapYoutubeDl
             if (ProgressDownload != null)
             {
                 ProgressDownload(this, e);
+                if (e.Percentage == 100 && !Finished)
+                {
+                    Finished = true;
+                    if (FinishedDownload != null)
+                    {
+                        FinishedDownload(this, new DownloadEventArgs() { ProcessObject = e.ProcessObject });
+                    }
+                }
             }
         }
-        protected virtual void OnDownloadFinished(DownloadEventArgs e)
-        {
-            if (FinishedDownload != null)
-            {
-                FinishedDownload(this, e);
-            }
-        }
+        //protected virtual void OnDownloadFinished(DownloadEventArgs e)
+        //{
+        //    if (FinishedDownload != null)
+        //    {
+        //        FinishedDownload(this, e);
+        //    }
+        //}
 
         protected virtual void OnDownloadStarted(DownloadEventArgs e)
         {
@@ -128,11 +138,15 @@ namespace WrapYoutubeDl
         }
 
         void Process_Exited(object sender, EventArgs e)
-        {            
-            this.Finished = true;
+        {
+            Finished = true;
+            if (FinishedDownload != null)
+            {
+                FinishedDownload(this, new DownloadEventArgs() { ProcessObject = this.ProcessObject });
+            }
             if (this.Percentage < 100)
             {
-                this.OnDownloadError(new ProgressEventArgs() { Error = "Download error", ProcessObject = this.ProcessObject });
+                this.OnDownloadError(new ProgressEventArgs() { Error = this.ConsoleLog, ProcessObject = this.ProcessObject });
             }
         }
 
@@ -146,11 +160,12 @@ namespace WrapYoutubeDl
         public void OutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
             // extract the percentage from process output
-            if (String.IsNullOrEmpty(outLine.Data))
+            if (String.IsNullOrEmpty(outLine.Data) || Finished)
             {
                 return;
             }
-            Console.WriteLine(outLine.Data);
+            this.ConsoleLog += outLine.Data;
+            //Console.WriteLine(outLine.Data);
 
             if (outLine.Data.Contains("ERROR"))
             {
@@ -172,20 +187,23 @@ namespace WrapYoutubeDl
             var perc = Convert.ToDecimal(Regex.Match(outLine.Data, @"\b\d+([\.,]\d+)?").Value);
             if (perc > 100 || perc < 0)
             {
+                Console.WriteLine("weird perc {0}", perc);
                 return;
             }
             this.Percentage = perc;
-            this.OnProgress(new ProgressEventArgs() { Percentage = perc });
+            this.OnProgress(new ProgressEventArgs() { ProcessObject = this.ProcessObject, Percentage = perc });
 
             // is it finished?
-            if (perc < 100 || Finished)
+            if (perc < 100)
             {
                 return;
             }
-
-            // task is finished, move the file to destination
-            this.OnDownloadFinished(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
-            this.Finished = true;
+            if (!Finished)
+            {
+                // task is finished, move the file to destination
+//                this.OnDownloadFinished(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
+                this.Finished = true;
+            }
         }
     }
 
