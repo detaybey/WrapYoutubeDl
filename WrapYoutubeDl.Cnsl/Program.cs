@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WrapYoutubeDl;
 
 namespace WrapYoutubeDl.Cnsl
 {
@@ -11,19 +6,20 @@ namespace WrapYoutubeDl.Cnsl
     {
         public string name { get; set; }
     }
+
     class Program
     {
         static void Main(string[] args)
-        {           
-          
+        {
+
             var mp3OutputFolder = "c:/@mp3/";
 
-            var downloader = new AudioDownloader("https://www.youtube.com/watch?v=pcS9a_Eup5Y", Guid.NewGuid().ToString(), mp3OutputFolder, false);
-            downloader.ProcessObject = new song() { name = "hede" };
+            var downloader = new AudioDownloader("https://www.youtube.com/watch?v=clhvCRwUjD4", Guid.NewGuid().ToString(), mp3OutputFolder);
+            downloader.ProcessObject = new song();
             downloader.ProgressDownload += downloader_ProgressDownload;
             downloader.FinishedDownload += downloader_FinishedDownload;
             downloader.Download();
-        
+
 
             Console.ReadLine();
         }

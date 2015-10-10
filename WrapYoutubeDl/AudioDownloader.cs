@@ -30,17 +30,17 @@ namespace WrapYoutubeDl
         public Process Process { get; set; }
         public string OutputName { get; set; }
         public string DestinationFolder { get; set; }
-        public bool Async { get; set; }
         public string Url { get; set; }
 
         public string ConsoleLog { get; set; }
-        public AudioDownloader(string url, string outputName, string outputfolder, bool async = false)
+
+
+        public AudioDownloader(string url, string outputName, string outputfolder)
         {
             this.Started = false;
             this.Finished = false;
             this.Percentage = 0;
 
-            Async = async;
             DestinationFolder = outputfolder;
             Url = url;
 
@@ -64,18 +64,18 @@ namespace WrapYoutubeDl
             {
                 throw new Exception(destinationPath + " exists");
             }
-            var arguments = string.Format(@"--continue --ignore-errors --no-overwrites --restrict-filenames --extract-audio --audio-format mp3 {0} -o ""{1}""", url, destinationPath);
+            var arguments = string.Format(@"--continue  --no-overwrites --restrict-filenames --extract-audio --audio-format mp3 {0} -o ""{1}""", url, destinationPath);  //--ignore-errors
 
             // setup the process that will fire youtube-dl
             Process = new Process();
-            Process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            Process.StartInfo.FileName = System.IO.Path.Combine(binaryPath, "youtube-dl.exe");
             Process.StartInfo.UseShellExecute = false;
             Process.StartInfo.RedirectStandardOutput = true;
+            Process.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+            Process.StartInfo.FileName = System.IO.Path.Combine(binaryPath, "youtube-dl.exe");
             Process.StartInfo.Arguments = arguments;
             Process.StartInfo.CreateNoWindow = true;
             Process.EnableRaisingEvents = true;
-                
+
             Process.OutputDataReceived += new DataReceivedEventHandler(OutputHandler);
             Process.ErrorDataReceived += new DataReceivedEventHandler(ErrorDataReceived);
 
@@ -85,39 +85,27 @@ namespace WrapYoutubeDl
         {
             if (ProgressDownload != null)
             {
-                ProgressDownload(this, e);
-                if (e.Percentage == 100 && !Finished)
-                {
-                    Finished = true;
-                    if (FinishedDownload != null)
-                    {
-                        FinishedDownload(this, new DownloadEventArgs() { ProcessObject = e.ProcessObject });
-                    }
-                }
+                ProgressDownload(this, e);               
             }
         }
-        //protected virtual void OnDownloadFinished(DownloadEventArgs e)
-        //{
-        //    if (FinishedDownload != null)
-        //    {
-        //        FinishedDownload(this, e);
-        //    }
-        //}
+
+        protected virtual void OnDownloadFinished(DownloadEventArgs e)
+        {
+            if (Finished == false)
+            {
+                Finished = true;
+                FinishedDownload?.Invoke(this, e);
+            }
+        }
 
         protected virtual void OnDownloadStarted(DownloadEventArgs e)
         {
-            if (StartedDownload != null)
-            {
-                StartedDownload(this, e);
-            }
+            StartedDownload?.Invoke(this, e);
         }
 
         protected virtual void OnDownloadError(ProgressEventArgs e)
         {
-            if (ErrorDownload != null)
-            {
-                ErrorDownload(this, e);
-            }
+            ErrorDownload?.Invoke(this, e);
         }
 
         public void Download()
@@ -127,27 +115,15 @@ namespace WrapYoutubeDl
             Process.Start();
             Process.BeginOutputReadLine();
             this.OnDownloadStarted(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
-            if (!this.Async)
+            while (this.Finished == false)
             {
-                while (this.Finished == false)
-                {
-                    System.Threading.Thread.Sleep(100);                   // wait while process exits;
-                }
+                System.Threading.Thread.Sleep(100);                   // wait while process exits;
             }
-           
         }
 
         void Process_Exited(object sender, EventArgs e)
         {
-            Finished = true;
-            if (FinishedDownload != null)
-            {
-                FinishedDownload(this, new DownloadEventArgs() { ProcessObject = this.ProcessObject });
-            }
-            if (this.Percentage < 100)
-            {
-                this.OnDownloadError(new ProgressEventArgs() { Error = this.ConsoleLog, ProcessObject = this.ProcessObject });
-            }
+            OnDownloadFinished(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
         }
 
         public void ErrorDataReceived(object sendingprocess, DataReceivedEventArgs error)
@@ -165,7 +141,6 @@ namespace WrapYoutubeDl
                 return;
             }
             this.ConsoleLog += outLine.Data;
-            //Console.WriteLine(outLine.Data);
 
             if (outLine.Data.Contains("ERROR"))
             {
@@ -198,11 +173,10 @@ namespace WrapYoutubeDl
             {
                 return;
             }
-            if (!Finished)
+
+            if (perc == 100 && !Finished)
             {
-                // task is finished, move the file to destination
-//                this.OnDownloadFinished(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
-                this.Finished = true;
+                OnDownloadFinished(new DownloadEventArgs() { ProcessObject = this.ProcessObject });
             }
         }
     }
