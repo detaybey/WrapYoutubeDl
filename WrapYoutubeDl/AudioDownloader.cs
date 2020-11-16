@@ -159,7 +159,7 @@ namespace WrapYoutubeDl
             }
 
             // fire the process event
-            var perc = Convert.ToDecimal(Regex.Match(outLine.Data, @"\b\d+([\.,]\d+)?").Value);
+            var perc = Convert.ToDecimal(Regex.Match(outLine.Data, @"\b\d+([\.,]\d+)?").Value, System.Globalization.CultureInfo.InvariantCulture);
             if (perc > 100 || perc < 0)
             {
                 Console.WriteLine("weird perc {0}", perc);
